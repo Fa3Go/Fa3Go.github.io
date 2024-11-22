@@ -324,8 +324,8 @@ function renderMatchGrid() {
         const cardElement = document.createElement('div');
         cardElement.className = `card${card.isMatched ? ' matched' : ''}`;
         cardElement.innerHTML = `
-            <div class="card-front sdg-${card.id}">
-                <div class="card-number">${card.id}</div>
+            <div class="card-front">
+                <div class="card-question">?</div>
             </div>
             <div class="card-back">
                 <div class="card-content">
