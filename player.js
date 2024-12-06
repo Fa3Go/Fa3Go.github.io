@@ -128,101 +128,150 @@ function updateDarkModeIcon(icon, isDark) {
 document.getElementById('fileInput').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) {
-        alert('Please select a file.');
+        alert('請選擇檔案');
         return;
     }
 
     if (!file.name.toLowerCase().endsWith('.m3u') &&
         !file.name.toLowerCase().endsWith('.m3u8')) {
-        alert('Please select a valid M3U/M3U8 file.');
+        alert('請選擇有效的 M3U/M3U8 檔案');
         return;
     }
 
     const reader = new FileReader();
-
     reader.onload = function (e) {
-        const content = e.target.result;
-        const playlist = parseM3U(content);
-        displayPlaylist(playlist);
+        try {
+            const content = e.target.result;
+            const playlist = parseM3U(content);
+            displayPlaylist(playlist);
+        } catch (error) {
+            console.error('讀取檔案時發生錯誤:', error);
+            alert('無法讀取播放清單檔案：' + error.message);
+        }
+    };
+
+    reader.onerror = function (error) {
+        console.error('檔案讀取錯誤:', error);
+        alert('檔案讀取失敗');
     };
 
     reader.readAsText(file);
 });
 
 function parseM3U(content) {
-    const lines = content.split('\n');
-    const playlist = [];
-    let currentItem = null;
+    try {
+        const lines = content.split('\n');
+        const playlist = [];
+        let currentItem = null;
 
-    lines.forEach(line => {
-        line = line.trim();
-        if (line.startsWith('#EXTINF:')) {
-            const titleMatch = line.match(/#EXTINF:.*,(.+)/);
-            currentItem = {
-                title: titleMatch ? titleMatch[1] : 'Untitled',
-                url: ''
-            };
-        } else if (line && !line.startsWith('#')) {
-            if (currentItem) {
-                currentItem.url = line;
-                playlist.push(currentItem);
-                currentItem = null;
-            } else {
-                playlist.push({
-                    title: `Track ${playlist.length + 1}`,
-                    url: line
-                });
+        lines.forEach(line => {
+            line = line.trim();
+            if (!line) return;
+
+            if (line.startsWith('#EXTINF:')) {
+                const titleMatch = line.match(/#EXTINF:.*,(.+)/);
+                currentItem = {
+                    title: titleMatch ? titleMatch[1].trim() : 'Untitled',
+                    url: ''
+                };
+            } else if (!line.startsWith('#')) {
+                if (currentItem) {
+                    currentItem.url = line;
+                    if (isValidUrl(line)) {
+                        playlist.push(currentItem);
+                    }
+                    currentItem = null;
+                } else if (isValidUrl(line)) {
+                    playlist.push({
+                        title: `Track ${playlist.length + 1}`,
+                        url: line
+                    });
+                }
             }
-        }
-    });
+        });
 
-    return playlist;
+        if (playlist.length === 0) {
+            throw new Error('沒有找到有效的播放項目');
+        }
+
+        return playlist;
+    } catch (error) {
+        console.error('解析 M3U 檔案時發生錯誤:', error);
+        throw error;
+    }
+}
+
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
 }
 
 function loadVideo(url) {
-    // 顯示載入中狀態
-    const playlistElement = document.getElementById('playlist');
-    const currentActiveItem = playlistElement.querySelector('.active');
-    if (currentActiveItem) {
-        currentActiveItem.innerHTML += ' <i class="fas fa-spinner fa-spin loading-indicator"></i>';
-    }
-
     // 如果已存在 HLS 實例，先銷毀它
     if (hls) {
         hls.destroy();
     }
+
+    // 顯示載入中狀態
+    player.addClass('vjs-loading');
 
     // 檢查是否為 HLS 串流
     if (url.endsWith('.m3u8')) {
         if (Hls.isSupported()) {
             hls = new Hls({
                 xhrSetup: function (xhr) {
-                    xhr.withCredentials = false; // 禁用 credentials
+                    // 設定跨域請求頭
+                    xhr.withCredentials = false;
                 }
             });
+
+            // 添加錯誤處理
+            hls.on(Hls.Events.ERROR, function (event, data) {
+                console.error('HLS 錯誤:', data);
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            // 嘗試重新載入
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            // 無法恢復的錯誤
+                            handleVideoLoadError(url);
+                            break;
+                    }
+                }
+            });
+
             hls.loadSource(url);
             hls.attachMedia(player.tech().el());
+
             hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                removeLoadingIndicator();
-                player.play();
+                player.removeClass('vjs-loading');
+                player.play().catch(function (error) {
+                    console.error('播放錯誤:', error);
+                });
             });
-            hls.on(Hls.Events.ERROR, function (event, data) {
-                handleHlsError(event, data);
-                removeLoadingIndicator();
-            });
-        } else if (player.tech().el().canPlayType('application/vnd.apple.mpegurl')) {
+        }
+        // 對於原生支援 HLS 的瀏覽器
+        else if (player.tech().el().canPlayType('application/vnd.apple.mpegurl')) {
             player.src({
                 src: url,
                 type: 'application/x-mpegURL'
             });
-            removeLoadingIndicator();
         }
     } else {
+        // 處理一般影片檔案
         player.src({
             src: url,
             type: getVideoType(url)
         });
-        removeLoadingIndicator();
     }
 }
 
@@ -247,19 +296,16 @@ function displayPlaylist(playlist) {
         const li = document.createElement('li');
         li.textContent = item.title;
         li.dataset.index = index;
-        li.dataset.url = item.url; // 儲存 URL 以便後續使用
 
+        // 點擊播放清單項目時的處理
         li.onclick = function () {
-            // 移除所有項目的 active 類別和載入指示器
             document.querySelectorAll('#playlist li').forEach(item => {
                 item.classList.remove('active');
-                const indicator = item.querySelector('.loading-indicator');
-                if (indicator) indicator.remove();
             });
-
             li.classList.add('active');
-            loadVideo(item.dataset.url);
+            loadVideo(item.url);
 
+            // 在手機版點擊後自動收合播放清單
             if (isMobile) {
                 const playlistSection = document.querySelector('.playlist-section');
                 const playerSection = document.querySelector('.player-section');
@@ -368,30 +414,4 @@ function showEmptyPlaylistMessage() {
     emptyMessage.textContent = 'No items in playlist';
     emptyMessage.classList.add('empty-message');
     playlistElement.appendChild(emptyMessage);
-}
-
-// 新增移除載入指示器的函數
-function removeLoadingIndicator() {
-    const loadingIndicators = document.querySelectorAll('.loading-indicator');
-    loadingIndicators.forEach(indicator => indicator.remove());
-}
-
-// 新增 HLS 錯誤處理函數
-function handleHlsError(event, data) {
-    console.error('HLS Error:', data);
-    if (data.fatal) {
-        switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-                // 嘗試重新載入
-                hls.startLoad();
-                break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-                hls.recoverMediaError();
-                break;
-            default:
-                // 無法恢復的錯誤
-                handleVideoLoadError(player.currentSrc());
-                break;
-        }
-    }
 }
