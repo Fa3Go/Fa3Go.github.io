@@ -180,6 +180,13 @@ function parseM3U(content) {
 }
 
 function loadVideo(url) {
+    // 顯示載入中狀態
+    const playlistElement = document.getElementById('playlist');
+    const currentActiveItem = playlistElement.querySelector('.active');
+    if (currentActiveItem) {
+        currentActiveItem.innerHTML += ' <i class="fas fa-spinner fa-spin loading-indicator"></i>';
+    }
+
     // 如果已存在 HLS 實例，先銷毀它
     if (hls) {
         hls.destroy();
@@ -188,27 +195,34 @@ function loadVideo(url) {
     // 檢查是否為 HLS 串流
     if (url.endsWith('.m3u8')) {
         if (Hls.isSupported()) {
-            // 如果瀏覽器支援 HLS，則初始化 HLS.js
-            hls = new Hls();
+            hls = new Hls({
+                xhrSetup: function (xhr) {
+                    xhr.withCredentials = false; // 禁用 credentials
+                }
+            });
             hls.loadSource(url);
             hls.attachMedia(player.tech().el());
             hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                removeLoadingIndicator();
                 player.play();
             });
-        }
-        // 對於原生支援 HLS 的瀏覽器（如 Safari）
-        else if (player.tech().el().canPlayType('application/vnd.apple.mpegurl')) {
+            hls.on(Hls.Events.ERROR, function (event, data) {
+                handleHlsError(event, data);
+                removeLoadingIndicator();
+            });
+        } else if (player.tech().el().canPlayType('application/vnd.apple.mpegurl')) {
             player.src({
                 src: url,
                 type: 'application/x-mpegURL'
             });
+            removeLoadingIndicator();
         }
     } else {
-        // 處理一般影片檔案
         player.src({
             src: url,
             type: getVideoType(url)
         });
+        removeLoadingIndicator();
     }
 }
 
@@ -233,16 +247,19 @@ function displayPlaylist(playlist) {
         const li = document.createElement('li');
         li.textContent = item.title;
         li.dataset.index = index;
+        li.dataset.url = item.url; // 儲存 URL 以便後續使用
 
-        // 點擊播放清單項目時的處理
         li.onclick = function () {
+            // 移除所有項目的 active 類別和載入指示器
             document.querySelectorAll('#playlist li').forEach(item => {
                 item.classList.remove('active');
+                const indicator = item.querySelector('.loading-indicator');
+                if (indicator) indicator.remove();
             });
-            li.classList.add('active');
-            loadVideo(item.url);
 
-            // 在手機版點擊後自動收合播放清單
+            li.classList.add('active');
+            loadVideo(item.dataset.url);
+
             if (isMobile) {
                 const playlistSection = document.querySelector('.playlist-section');
                 const playerSection = document.querySelector('.player-section');
@@ -351,4 +368,30 @@ function showEmptyPlaylistMessage() {
     emptyMessage.textContent = 'No items in playlist';
     emptyMessage.classList.add('empty-message');
     playlistElement.appendChild(emptyMessage);
+}
+
+// 新增移除載入指示器的函數
+function removeLoadingIndicator() {
+    const loadingIndicators = document.querySelectorAll('.loading-indicator');
+    loadingIndicators.forEach(indicator => indicator.remove());
+}
+
+// 新增 HLS 錯誤處理函數
+function handleHlsError(event, data) {
+    console.error('HLS Error:', data);
+    if (data.fatal) {
+        switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+                // 嘗試重新載入
+                hls.startLoad();
+                break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+                hls.recoverMediaError();
+                break;
+            default:
+                // 無法恢復的錯誤
+                handleVideoLoadError(player.currentSrc());
+                break;
+        }
+    }
 }
