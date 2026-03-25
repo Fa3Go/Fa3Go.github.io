@@ -1,417 +1,191 @@
-// 全域變數宣告
-let player; // Video.js 播放器實例
-let hls;    // HLS.js 實例，用於處理 m3u8 串流
-// 新增 RWD 相關變數
-const MOBILE_BREAKPOINT = 768; // 手機版斷點（像素）
-let isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+// Theme Toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const themeToggle = document.getElementById('themeToggle');
+    const icon = themeToggle.querySelector('i');
 
-// 初始化播放器和摺疊功能
-document.addEventListener('DOMContentLoaded', function () {
-    // 初始化播放器
-    player = videojs('videoPlayer', {
-        controls: true,// 顯示控制列
-        fluid: true,// 自適應容器大小
-        playbackRates: [0.5, 1, 1.5, 2],// 播放速度選項
-        html5: {
-            hls: {
-                enableLowInitialPlaylist: true,
-                smoothQualityChange: true,
-                overrideNative: true
-            }
-        },
-        // 新增播放器的英文介面設定
-        controlBar: {
-            playToggle: {
-                tooltip: 'Play/Pause'
-            },
-            volumePanel: {
-                inline: false,
-                volumeControl: {
-                    tooltip: 'Volume'
-                }
-            },
-            currentTimeDisplay: true,
-            timeDivider: true,
-            durationDisplay: true,
-            remainingTimeDisplay: false,
-            progressControl: {
-                seekBar: {
-                    tooltip: 'Seek'
-                }
-            },
-            fullscreenToggle: {
-                tooltip: 'Fullscreen'
-            },
-            playbackRateMenuButton: {
-                tooltip: 'Playback Rate'
-            }
-        }
-    });
-
-    // 初始化摺疊功能
-    initializeCollapse();
-
-    // 初始化深色模式
-    initializeDarkMode();
-
-    // 初始化 RWD 功能
-    initializeRWD();
-});
-
-// 摺疊功能初始化
-function initializeCollapse() {
-    const toggleBtn = document.querySelector('.toggle-btn');
-    const playlistSection = document.querySelector('.playlist-section');
-    const playerSection = document.querySelector('.player-section');
-
-    // 設定初始狀態
-    if (!isMobile) {
-        playerSection.style.marginRight = '300px';
-    }
-
-    toggleBtn.addEventListener('click', function () {
-        playlistSection.classList.toggle('collapsed');
-
-        if (playlistSection.classList.contains('collapsed')) {
-            playerSection.style.marginRight = '30px';
-        } else {
-            if (!isMobile) {
-                playerSection.style.marginRight = '300px';
-            }
-        }
-
-        // 重新計算播放器大小
-        if (player) {
-            setTimeout(() => {
-                const playerHeight = isMobile ?
-                    Math.min(window.innerHeight * 0.4, 300) : 500;
-                player.dimensions(player.currentWidth(), playerHeight);
-            }, 300);
-        }
-    });
-}
-
-function initializeDarkMode() {
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const icon = darkModeToggle.querySelector('i');
-
-    // 檢查本地儲存的主題設定
+    // Check saved theme
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateDarkModeIcon(icon, savedTheme === 'dark');
+    if (savedTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        icon.className = 'fas fa-sun';
     }
 
-    darkModeToggle.addEventListener('click', () => {
+    themeToggle.addEventListener('click', () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
-        updateDarkModeIcon(icon, newTheme === 'dark');
-
-        // 更新 Video.js 播放器主題
-        if (player) {
-            if (newTheme === 'dark') {
-                player.addClass('vjs-theme-dark');
-            } else {
-                player.removeClass('vjs-theme-dark');
-            }
-        }
-    });
-}
-
-function updateDarkModeIcon(icon, isDark) {
-    icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-}
-
-document.getElementById('fileInput').addEventListener('change', function (e) {
-    const file = e.target.files[0];
-    if (!file) {
-        alert('請選擇檔案');
-        return;
-    }
-
-    if (!file.name.toLowerCase().endsWith('.m3u') &&
-        !file.name.toLowerCase().endsWith('.m3u8')) {
-        alert('請選擇有效的 M3U/M3U8 檔案');
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        try {
-            const content = e.target.result;
-            const playlist = parseM3U(content);
-            displayPlaylist(playlist);
-        } catch (error) {
-            console.error('讀取檔案時發生錯誤:', error);
-            alert('無法讀取播放清單檔案：' + error.message);
-        }
-    };
-
-    reader.onerror = function (error) {
-        console.error('檔案讀取錯誤:', error);
-        alert('檔案讀取失敗');
-    };
-
-    reader.readAsText(file);
-});
-
-function parseM3U(content) {
-    try {
-        const lines = content.split('\n');
-        const playlist = [];
-        let currentItem = null;
-
-        lines.forEach(line => {
-            line = line.trim();
-            if (!line) return;
-
-            if (line.startsWith('#EXTINF:')) {
-                const titleMatch = line.match(/#EXTINF:.*,(.+)/);
-                currentItem = {
-                    title: titleMatch ? titleMatch[1].trim() : 'Untitled',
-                    url: ''
-                };
-            } else if (!line.startsWith('#')) {
-                if (currentItem) {
-                    currentItem.url = line;
-                    if (isValidUrl(line)) {
-                        playlist.push(currentItem);
-                    }
-                    currentItem = null;
-                } else if (isValidUrl(line)) {
-                    playlist.push({
-                        title: `Track ${playlist.length + 1}`,
-                        url: line
-                    });
-                }
-            }
-        });
-
-        if (playlist.length === 0) {
-            throw new Error('沒有找到有效的播放項目');
-        }
-
-        return playlist;
-    } catch (error) {
-        console.error('解析 M3U 檔案時發生錯誤:', error);
-        throw error;
-    }
-}
-
-function isValidUrl(string) {
-    try {
-        new URL(string);
-        return true;
-    } catch (_) {
-        return false;
-    }
-}
-
-function loadVideo(url) {
-    // 如果已存在 HLS 實例，先銷毀它
-    if (hls) {
-        hls.destroy();
-    }
-
-    // 顯示載入中狀態
-    player.addClass('vjs-loading');
-
-    // 檢查是否為 HLS 串流
-    if (url.endsWith('.m3u8')) {
-        if (Hls.isSupported()) {
-            hls = new Hls({
-                xhrSetup: function (xhr) {
-                    // 設定跨域請求頭
-                    xhr.withCredentials = false;
-                }
-            });
-
-            // 添加錯誤處理
-            hls.on(Hls.Events.ERROR, function (event, data) {
-                console.error('HLS 錯誤:', data);
-                if (data.fatal) {
-                    switch (data.type) {
-                        case Hls.ErrorTypes.NETWORK_ERROR:
-                            // 嘗試重新載入
-                            hls.startLoad();
-                            break;
-                        case Hls.ErrorTypes.MEDIA_ERROR:
-                            hls.recoverMediaError();
-                            break;
-                        default:
-                            // 無法恢復的錯誤
-                            handleVideoLoadError(url);
-                            break;
-                    }
-                }
-            });
-
-            hls.loadSource(url);
-            hls.attachMedia(player.tech().el());
-
-            hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                player.removeClass('vjs-loading');
-                player.play().catch(function (error) {
-                    console.error('播放錯誤:', error);
-                });
-            });
-        }
-        // 對於原生支援 HLS 的瀏覽器
-        else if (player.tech().el().canPlayType('application/vnd.apple.mpegurl')) {
-            player.src({
-                src: url,
-                type: 'application/x-mpegURL'
-            });
-        }
-    } else {
-        // 處理一般影片檔案
-        player.src({
-            src: url,
-            type: getVideoType(url)
-        });
-    }
-}
-
-// 根據檔案副檔名取得對應的 MIME 類型
-function getVideoType(url) {
-    const extension = url.split('.').pop().toLowerCase();
-    const types = {
-        'm3u8': 'application/x-mpegURL',
-        'mp4': 'video/mp4',
-        'webm': 'video/webm',
-        'ogg': 'video/ogg'
-    };
-    return types[extension] || 'video/mp4';
-}
-
-// 顯示播放清單並處理點擊事件 
-function displayPlaylist(playlist) {
-    const playlistElement = document.getElementById('playlist');
-    playlistElement.innerHTML = '';
-
-    playlist.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.textContent = item.title;
-        li.dataset.index = index;
-
-        // 點擊播放清單項目時的處理
-        li.onclick = function () {
-            document.querySelectorAll('#playlist li').forEach(item => {
-                item.classList.remove('active');
-            });
-            li.classList.add('active');
-            loadVideo(item.url);
-
-            // 在手機版點擊後自動收合播放清單
-            if (isMobile) {
-                const playlistSection = document.querySelector('.playlist-section');
-                const playerSection = document.querySelector('.player-section');
-                playlistSection.classList.add('collapsed');
-                playerSection.style.marginRight = '30px';
-            }
-        };
-        playlistElement.appendChild(li);
+        icon.className = newTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
     });
 
-    // 自動載入第一個項目
-    if (playlist.length > 0) {
-        loadVideo(playlist[0].url);
-        playlistElement.firstChild.classList.add('active');
-    }
-}
+    // Typing Effect
+    const roles = ['開發者', '設計師', '創作者'];
+    let roleIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typingElement = document.getElementById('typing');
 
-// 新增影片結束時自動播放下一個的功能
-player.on('ended', function () {
-    const activeItem = document.querySelector('#playlist li.active');
-    if (activeItem) {
-        const nextItem = activeItem.nextElementSibling;
-        if (nextItem) {
-            nextItem.click();
-        }
-    }
-});
+    function type() {
+        const currentRole = roles[roleIndex];
 
-// 新增 RWD 初始化函數
-function initializeRWD() {
-    const playlistSection = document.querySelector('.playlist-section');
-    const playerSection = document.querySelector('.player-section');
-
-    // 根據螢幕寬度設定初始狀態
-    function updateLayout() {
-        isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-
-        if (isMobile) {
-            // 手機版自動收合播放清單
-            playlistSection.classList.add('collapsed');
-            playerSection.style.marginRight = '30px';
-
-            // 調整播放器高度以適應手機螢幕
-            const viewportHeight = window.innerHeight;
-            const playerHeight = Math.min(viewportHeight * 0.4, 300); // 最大高度 300px
-            player.dimensions('100%', playerHeight);
+        if (isDeleting) {
+            typingElement.textContent = currentRole.substring(0, charIndex - 1);
+            charIndex--;
         } else {
-            // 電腦版展開播放清單
-            if (!playlistSection.classList.contains('collapsed')) {
-                playerSection.style.marginRight = '300px';
-            }
+            typingElement.textContent = currentRole.substring(0, charIndex + 1);
+            charIndex++;
+        }
 
-            // 重設播放器高度
-            player.dimensions('100%', 500);
+        let typeSpeed = isDeleting ? 50 : 100;
+
+        if (!isDeleting && charIndex === currentRole.length) {
+            typeSpeed = 2000;
+            isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            roleIndex = (roleIndex + 1) % roles.length;
+            typeSpeed = 500;
+        }
+
+        setTimeout(type, typeSpeed);
+    }
+
+    type();
+
+    // Smooth Scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Scroll Animation
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Parallax Effect on Mouse Move
+    document.addEventListener('mousemove', (e) => {
+        const cards = document.querySelectorAll('.skill-card, .project-card');
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+
+        cards.forEach((card, index) => {
+            const depth = (index % 3 + 1) * 5;
+            const moveX = (x - 0.5) * depth;
+            const moveY = (y - 0.5) * depth;
+            card.style.transform = `perspective(1000px) rotateX(${-moveY}deg) rotateY(${moveX}deg) translateY(${card.classList.contains('visible') ? '0' : '20px'})`;
+        });
+    });
+
+    // Dynamic Stats Counter (if needed)
+    function animateCounter(element, target, duration = 2000) {
+        let start = 0;
+        const increment = target / (duration / 16);
+
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= target) {
+                element.textContent = target;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(start);
+            }
+        }, 16);
+    }
+
+    // Active Navigation Highlight
+    window.addEventListener('scroll', () => {
+        let current = '';
+        const sections = document.querySelectorAll('section');
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (scrollY >= (sectionTop - 200)) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    // Terminal Animation
+    const terminalContent = document.querySelector('.terminal-content');
+    if (terminalContent) {
+        const lines = terminalContent.children;
+        Array.from(lines).forEach((line, index) => {
+            line.style.opacity = '0';
+            setTimeout(() => {
+                line.style.transition = 'opacity 0.5s';
+                line.style.opacity = '1';
+            }, index * 500);
+        });
+    }
+
+    // Particle Background Effect (Optional Enhancement)
+    function createParticles() {
+        const bgAnimation = document.querySelector('.bg-animation');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = Math.random() * 3 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.background = 'var(--accent-primary)';
+            particle.style.borderRadius = '50%';
+            particle.style.opacity = Math.random() * 0.5;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animation = `float ${Math.random() * 10 + 10}s linear infinite`;
+            bgAnimation.appendChild(particle);
         }
     }
 
-    // 監聽視窗大小變化
-    window.addEventListener('resize', debounce(updateLayout, 250));
-
-    // 初始執行一次
-    updateLayout();
-}
-
-// 新增防抖動函數
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// 錯誤處理訊息
-function handleError(error) {
-    console.error('Playback error:', error);
-    // 可以加入使用者提示
-    alert('Error playing the video. Please try another file or check the URL.');
-}
-
-// 播放器事件處理
-player.on('error', function (error) {
-    console.error('Video player error:', error);
-    alert('Video playback error. Please try another video.');
+    createParticles();
 });
 
-// 當影片無法載入時的處理
-function handleVideoLoadError(url) {
-    console.error('Failed to load video:', url);
-    alert('Unable to load the video. Please check the URL or try another video.');
-}
-
-// 播放清單項目格式化
-function formatPlaylistItem(title, index) {
-    return `${index + 1}. ${title}`;
-}
-
-// 當沒有播放內容時的預設訊息
-function showEmptyPlaylistMessage() {
-    const playlistElement = document.getElementById('playlist');
-    const emptyMessage = document.createElement('li');
-    emptyMessage.textContent = 'No items in playlist';
-    emptyMessage.classList.add('empty-message');
-    playlistElement.appendChild(emptyMessage);
-}
+// Floating Animation for Particles
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0) translateX(0);
+        }
+        25% {
+            transform: translateY(-20px) translateX(10px);
+        }
+        50% {
+            transform: translateY(0) translateX(20px);
+        }
+        75% {
+            transform: translateY(20px) translateX(10px);
+        }
+    }
+`;
+document.head.appendChild(style);

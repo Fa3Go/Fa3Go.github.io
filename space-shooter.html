@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>太空射擊遊戲</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --win95-gray: #c0c0c0;
+            --win95-dark-gray: #808080;
+            --win95-white: #ffffff;
+            --win95-black: #000000;
+            --win95-blue: #000080;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--win95-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Pixelify Sans', 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        #gameContainer {
+            position: relative;
+            border: 2px solid;
+            border-color: var(--win95-dark-gray) var(--win95-white) var(--win95-white) var(--win95-dark-gray);
+            background: var(--win95-black);
+        }
+
+        canvas {
+            display: block;
+            background: #000;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        #gameUI {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #ffff00;
+            font-size: 16px;
+            pointer-events: none;
+            font-family: 'Pixelify Sans', monospace;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #000;
+            font-size: 28px;
+            display: none;
+            background: var(--win95-gray);
+            padding: 30px;
+            border: 2px solid;
+            border-color: var(--win95-white) var(--win95-black) var(--win95-black) var(--win95-white);
+        }
+
+        #gameOver .title {
+            color: #ff0000;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        #gameOver button {
+            margin-top: 20px;
+            padding: 8px 25px;
+            font-size: 16px;
+            background: var(--win95-gray);
+            border: 2px solid;
+            border-color: var(--win95-white) var(--win95-black) var(--win95-black) var(--win95-white);
+            color: #000;
+            cursor: pointer;
+            font-family: 'Pixelify Sans', monospace;
+            font-weight: bold;
+            pointer-events: auto;
+        }
+
+        #gameOver button:active {
+            border-color: var(--win95-black) var(--win95-white) var(--win95-white) var(--win95-black);
+            padding: 9px 24px 7px 26px;
+        }
+
+        #startScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: var(--win95-gray);
+            padding: 40px;
+            border: 2px solid;
+            border-color: var(--win95-white) var(--win95-black) var(--win95-black) var(--win95-white);
+        }
+
+        #startScreen h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--win95-blue);
+        }
+
+        #startScreen p {
+            font-size: 14px;
+            margin: 8px 0;
+            color: #000;
+        }
+
+        #startScreen button {
+            margin-top: 25px;
+            padding: 10px 35px;
+            font-size: 18px;
+            background: var(--win95-gray);
+            border: 2px solid;
+            border-color: var(--win95-white) var(--win95-black) var(--win95-black) var(--win95-white);
+            color: #000;
+            cursor: pointer;
+            font-family: 'Pixelify Sans', monospace;
+            font-weight: bold;
+        }
+
+        #startScreen button:active {
+            border-color: var(--win95-black) var(--win95-white) var(--win95-white) var(--win95-black);
+            padding: 11px 34px 9px 36px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <div id="gameUI">
+            <div>關卡: <span id="level">1</span></div>
+            <div>分數: <span id="score">0</span></div>
+            <div>生命: <span id="lives">3</span></div>
+        </div>
+
+        <div id="startScreen">
+            <h1>太空射擊</h1>
+            <p>← → 移動飛船</p>
+            <p>SPACE 發射子彈</p>
+            <p>消滅所有敵人！</p>
+            <button onclick="startGame()">開始遊戲</button>
+        </div>
+
+        <div id="gameOver">
+            <div class="title">遊戲結束!</div>
+            <div style="font-size: 20px; margin-top: 15px;">最終分數: <span id="finalScore">0</span></div>
+            <button onclick="restartGame()">重新開始</button>
+        </div>
+
+        <div id="levelComplete" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; background: var(--win95-gray); padding: 30px; border: 2px solid; border-color: var(--win95-white) var(--win95-black) var(--win95-black) var(--win95-white);">
+            <div style="color: var(--win95-blue); font-size: 28px; font-weight: bold; margin-bottom: 15px;">關卡完成!</div>
+            <div style="font-size: 18px; color: #000;">準備進入下一關...</div>
+        </div>
+
+        <div id="gameComplete" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; background: var(--win95-gray); padding: 40px; border: 2px solid; border-color: var(--win95-white) var(--win95-black) var(--win95-black) var(--win95-white);">
+            <div style="color: #008000; font-size: 32px; font-weight: bold; margin-bottom: 20px;">恭喜過關!</div>
+            <div style="font-size: 20px; color: #000; margin-bottom: 15px;">你完成了所有關卡!</div>
+            <div style="font-size: 18px; color: #000;">最終分數: <span id="finalScoreComplete">0</span></div>
+            <button onclick="restartGame()" style="margin-top: 20px; padding: 8px 25px; font-size: 16px; background: var(--win95-gray); border: 2px solid; border-color: var(--win95-white) var(--win95-black) var(--win95-black) var(--win95-white); color: #000; cursor: pointer; font-family: 'Pixelify Sans', monospace; font-weight: bold;">重新開始</button>
+        </div>
+    </div>
+
+    <script src="space-shooter.js"></script>
+</body>
+</html>
