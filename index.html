@@ -623,24 +623,24 @@
         <div class="start-menu-header">Windows 95</div>
         <div class="start-menu-items">
             <div class="start-menu-item" onclick="openWindow('about')">
-                <img src=".github/biography.png" alt="" style="width: 16px; height: 16px;">
+                <img src="images\biography.png" alt="" style="width: 16px; height: 16px;">
                 <span>關於我</span>
             </div>
             <div class="start-menu-item" onclick="openWindow('projects')">
-                <img src=".github/folder.png" alt="" style="width: 16px; height: 16px;">
+                <img src="images\folder.png" alt="" style="width: 16px; height: 16px;">
                 <span>我的作品</span>
             </div>
             <div class="start-menu-item" onclick="openWindow('gallery')">
-                <img src=".github/photo.png" alt="" style="width: 16px; height: 16px;">
+                <img src="images\photo.png" alt="" style="width: 16px; height: 16px;">
                 <span>相簿</span>
             </div>
             <div class="start-menu-separator"></div>
             <div class="start-menu-item" onclick="openWindow('contact')">
-                <img src=".github/mail.png" alt="" style="width: 16px; height: 16px;">
+                <img src="images\mail.png" alt="" style="width: 16px; height: 16px;">
                 <span>聯絡方式</span>
             </div>
             <div class="start-menu-item" onclick="openWindow('notepad')">
-                <img src=".github/notepad.png" alt="" style="width: 16px; height: 16px;">
+                <img src="images\notepad.png" alt="" style="width: 16px; height: 16px;">
                 <span>記事本</span>
             </div>
             <div class="start-menu-separator"></div>
@@ -660,7 +660,7 @@
     <div class="window" id="about-window" style="top: 30px; left: 100px; width: 600px;">
         <div class="title-bar" onmousedown="startDrag(event, 'about-window')">
             <div class="title-bar-text">
-                <img src=".github/biography.png" alt="" style="width: 16px; height: 16px;">
+                <img src="images\biography.png" alt="" style="width: 16px; height: 16px;">
                 <span>關於我</span>
             </div>
             <div class="title-bar-controls">
@@ -678,7 +678,21 @@
         <div class="window-content">
             <h2>👋 Hi, I'm a Developer</h2>
             <p>專注於全端開發、IoT與各種技術實作</p>
-            <p>從2020年開始學習程式設計，持續探索新技術，追求代碼品質與使用者體驗。</p>
+            <p>我是江廣正，畢業於大葉大學資訊工程學系。大學四年的學習歷程讓我從零開始建立起完整的軟體開發能力，並在 AIoT（人工智慧物聯網）領域找到自己的發展方向。
+
+技術能力與專案經驗
+
+在後端開發方面，我熟悉 Python 與 Flask 框架，能夠獨立建構 RESTful API 與完整的網頁應用系統。前端技術上，我掌握 HTML、CSS、JavaScript 與 Bootstrap，能夠快速開發響應式網頁介面。資料庫管理方面，我具備 SQL 與 NoSQL 的實務經驗，能根據專案需求選擇適合的資料存儲方案。
+
+我對 AI 應用開發有濃厚興趣並持續投入研究。在本地端語音助理的開發上，我整合了 OpenAI Whisper 語音辨識、Ollama 大型語言模型、RAG（檢索增強生成）知識庫架構，以及 Edge-TTS 語音合成技術，打造出能回答特定領域問題的智慧語音助理。這個專案讓我深入理解了 AI 應用的完整技術棧，包括語音處理、自然語言理解、向量資料庫與知識檢索等核心技術。
+
+在物聯網領域，我跟隨蔡渙良教授進行專題研究，學習各類感測器的應用與系統整合。這段經歷讓我理解軟硬體協作的重要性，也培養了我從需求分析到系統實作的完整開發能力。2024 年，我有幸參與台灣創新技術博覽會並獲得銅牌肯定，這次經驗讓我看見業界的技術趨勢，也更堅定了我在 AIoT 領域深耕的決心。2025年更進一步獲得了銀牌的殊榮。
+
+學習態度與問題解決能力
+
+身為獨生子，我從小養成獨立思考與自主學習的習慣。在程式學習的過程中，我經歷過物件導向設計概念的挫折，也曾面對 AI 工具崛起時對自身價值的懷疑。但這些經歷反而讓我更深刻地理解：工程師的核心價值在於解決問題的能力與持續學習的熱情，而非單純的程式碼撰寫。
+
+我習慣主動探索新技術。從比較各種 TTS 系統（Coqui TTS、Edge-TTS、Piper）的優劣，到研究蝦皮 API 與 LLM 整合的自動客服方案，再到追蹤 OpenAI 最新模型的技術更新，我保持對技術發展的敏銳度，並樂於將所學應用於實際專案中。</p>
 
             <h3 style="margin-top: 20px; margin-bottom: 10px; color: var(--win95-blue);">💻 技術專長</h3>
 
@@ -687,7 +701,6 @@
                 <span class="skill-tag skill-javascript">JavaScript</span>
                 <span class="skill-tag skill-python">Python</span>
                 <span class="skill-tag skill-vue">Vue.js</span>
-                <span class="skill-tag skill-react">React Native</span>
                 <span class="skill-tag skill-flutter">Flutter</span>
                 <span class="skill-tag skill-php">PHP</span>
                 <span class="skill-tag skill-c">C</span>
@@ -696,9 +709,7 @@
                 <span class="skill-tag skill-mongodb">MongoDB</span>
                 <span class="skill-tag skill-sqlite">SQLite</span>
                 <span class="skill-tag skill-git">Git</span>
-                <span class="skill-tag skill-docker">Docker</span>
                 <span class="skill-tag skill-flask">Flask</span>
-                <span class="skill-tag skill-figma">Figma</span>
             </div>
         </div>
         <div class="status-bar">
@@ -714,7 +725,7 @@
     <div class="window" id="projects-window" style="top: 50px; left: 200px;height: 550px; width: 650px;">
         <div class="title-bar" onmousedown="startDrag(event, 'projects-window')">
             <div class="title-bar-text">
-                <img src=".github/folder.png" alt="" style="width: 16px; height: 16px;">
+                <img src="images\folder.png" alt="" style="width: 16px; height: 16px;">
                 <span>我的作品</span>
             </div>
             <div class="title-bar-controls">
@@ -767,7 +778,7 @@
     <div class="window" id="contact-window" style="top: 140px; left: 250px; width: 500px;">
         <div class="title-bar" onmousedown="startDrag(event, 'contact-window')">
             <div class="title-bar-text">
-                <img src=".github/mail.png" alt="" style="width: 16px; height: 16px;">
+                <img src="images\mail.png" alt="" style="width: 16px; height: 16px;">
                 <span>聯絡方式</span>
             </div>
             <div class="title-bar-controls">
@@ -794,7 +805,7 @@
             <br>
             <p><strong>✉️ Email：</strong></p>
             <p>
-                <a href="mailto:your.email@example.com" class="project-link">
+                <a href="mailto:as35258857@gmail.com" class="project-link">
                     發送郵件
                 </a>
             </p>
@@ -812,7 +823,7 @@
     <div class="window" id="notepad-window" style="top: 160px; left: 300px; width: 500px;">
         <div class="title-bar" onmousedown="startDrag(event, 'notepad-window')">
             <div class="title-bar-text">
-                <img src=".github/notepad.png" alt="" style="width: 16px; height: 16px;">
+                <img src="images\notepad.png" alt="" style="width: 16px; height: 16px;">
                 <span>記事本 - 無標題</span>
             </div>
             <div class="title-bar-controls">
@@ -843,7 +854,7 @@
     <div class="window" id="gallery-window" style="top: 100px; left: 250px; width: 600px;">
         <div class="title-bar" onmousedown="startDrag(event, 'gallery-window')">
             <div class="title-bar-text">
-                <img src=".github/photo.png" alt="" style="width: 16px; height: 16px;">
+                <img src="images\photo.png" alt="" style="width: 16px; height: 16px;">
                 <span>相簿</span>
             </div>
             <div class="title-bar-controls">
@@ -984,6 +995,7 @@
             const win = document.getElementById(windowId + '-window');
             if (!win) return;
 
+            win.style.display = '';
             win.classList.add('active');
             win.style.zIndex = ++zIndexCounter;
 
