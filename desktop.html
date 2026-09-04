@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 11 - 開發者作品集</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="desktop.css">
+</head>
+<body>
+    <!-- Desktop -->
+    <div class="desktop" id="desktop">
+        <!-- Wallpaper -->
+        <div class="wallpaper"></div>
+
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="desktop-icon" data-app="about">
+                <div class="icon-image">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span class="icon-name">關於我</span>
+            </div>
+
+            <div class="desktop-icon" data-app="projects">
+                <div class="icon-image">
+                    <i class="fas fa-folder"></i>
+                </div>
+                <span class="icon-name">我的作品</span>
+            </div>
+
+            <div class="desktop-icon" data-app="gallery">
+                <div class="icon-image">
+                    <i class="fas fa-images"></i>
+                </div>
+                <span class="icon-name">相簿</span>
+            </div>
+
+            <div class="desktop-icon" data-app="contact">
+                <div class="icon-image">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <span class="icon-name">聯絡方式</span>
+            </div>
+
+            <div class="desktop-icon" data-app="notes">
+                <div class="icon-image">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <span class="icon-name">記事本</span>
+            </div>
+
+            <div class="desktop-icon" data-app="game">
+                <div class="icon-image">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <span class="icon-name">太空射擊</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="taskbar-left">
+            <button class="start-button" id="startButton">
+                <i class="fab fa-windows"></i>
+            </button>
+            <button class="search-button">
+                <i class="fas fa-search"></i>
+                <span>搜尋</span>
+            </button>
+            <div class="taskbar-center" id="taskbarApps">
+                <!-- Running apps will be added here -->
+            </div>
+        </div>
+
+        <div class="taskbar-right">
+            <button class="tray-icon" id="widgetButton">
+                <i class="fas fa-th"></i>
+            </button>
+            <div class="system-tray">
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-volume-up"></i>
+                <i class="fas fa-battery-three-quarters"></i>
+            </div>
+            <div class="clock" id="clock">
+                <div class="time">12:00</div>
+                <div class="date">2024/1/1</div>
+            </div>
+            <button class="notification-button">
+                <i class="fas fa-bell"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Start Menu -->
+    <div class="start-menu" id="startMenu">
+        <div class="start-menu-header">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="搜尋應用程式、設定等">
+            </div>
+        </div>
+
+        <div class="start-menu-content">
+            <div class="pinned-apps">
+                <h3>已釘選</h3>
+                <div class="app-grid">
+                    <div class="app-tile" data-app="about">
+                        <div class="app-tile-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span>關於我</span>
+                    </div>
+                    <div class="app-tile" data-app="projects">
+                        <div class="app-tile-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <span>我的作品</span>
+                    </div>
+                    <div class="app-tile" data-app="gallery">
+                        <div class="app-tile-icon">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <span>相簿</span>
+                    </div>
+                    <div class="app-tile" data-app="contact">
+                        <div class="app-tile-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <span>聯絡方式</span>
+                    </div>
+                    <div class="app-tile" data-app="notes">
+                        <div class="app-tile-icon">
+                            <i class="fas fa-sticky-note"></i>
+                        </div>
+                        <span>記事本</span>
+                    </div>
+                    <div class="app-tile" data-app="game">
+                        <div class="app-tile-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <span>太空射擊</span>
+                    </div>
+                    <div class="app-tile" onclick="window.open('https://github.com/Fa3Go', '_blank')">
+                        <div class="app-tile-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <span>GitHub</span>
+                    </div>
+                    <div class="app-tile" data-app="settings">
+                        <div class="app-tile-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <span>設定</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommended">
+                <h3>建議</h3>
+                <div class="recommended-item">
+                    <i class="fas fa-file"></i>
+                    <div class="recommended-info">
+                        <div class="recommended-name">最近使用的項目</div>
+                        <div class="recommended-time">剛才</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="start-menu-footer">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span>Developer</span>
+            </div>
+            <button class="power-button">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Widgets Panel -->
+    <div class="widgets-panel" id="widgetsPanel">
+        <div class="widgets-header">
+            <h2>小工具</h2>
+            <button class="close-widgets" onclick="closeWidgets()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="widgets-content">
+            <div class="widget-card">
+                <h3>📅 天氣</h3>
+                <div class="weather-info">
+                    <div class="temperature">22°C</div>
+                    <div class="weather-desc">晴朗</div>
+                </div>
+            </div>
+            <div class="widget-card">
+                <h3>📰 新聞</h3>
+                <p>查看最新的技術資訊和更新</p>
+            </div>
+            <div class="widget-card">
+                <h3>🔗 快速連結</h3>
+                <div class="quick-links">
+                    <a href="https://github.com/Fa3Go" target="_blank">GitHub</a>
+                    <a href="https://www.linkedin.com/" target="_blank">LinkedIn</a>
+                    <a href="https://twitter.com/" target="_blank">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Windows -->
+    <!-- About Window -->
+    <div class="window" id="about-window">
+        <div class="window-header" data-window="about-window">
+            <div class="window-title">
+                <i class="fas fa-user"></i>
+                <span>關於我</span>
+            </div>
+            <div class="window-controls">
+                <button class="control-button minimize" onclick="minimizeWindow('about-window')">
+                    <i class="fas fa-window-minimize"></i>
+                </button>
+                <button class="control-button maximize" onclick="maximizeWindow('about-window')">
+                    <i class="far fa-square"></i>
+                </button>
+                <button class="control-button close" onclick="closeWindow('about-window')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="window-content">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h1>Hi, I'm a Developer</h1>
+                    <p>專注於全端開發、IoT與各種技術實作</p>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>💻 技術專長</h2>
+                <div class="skills-container">
+                    <span class="skill-badge">HTML/CSS</span>
+                    <span class="skill-badge">JavaScript</span>
+                    <span class="skill-badge">Python</span>
+                    <span class="skill-badge">Vue.js</span>
+                    <span class="skill-badge">React Native</span>
+                    <span class="skill-badge">Flutter</span>
+                    <span class="skill-badge">PHP</span>
+                    <span class="skill-badge">C</span>
+                    <span class="skill-badge">SQL</span>
+                    <span class="skill-badge">MySQL</span>
+                    <span class="skill-badge">MongoDB</span>
+                    <span class="skill-badge">SQLite</span>
+                    <span class="skill-badge">Git</span>
+                    <span class="skill-badge">Docker</span>
+                    <span class="skill-badge">Flask</span>
+                    <span class="skill-badge">Figma</span>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2>📚 關於</h2>
+                <p>從2020年開始學習程式設計，持續探索新技術，追求代碼品質與使用者體驗。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Window -->
+    <div class="window" id="projects-window">
+        <div class="window-header" data-window="projects-window">
+            <div class="window-title">
+                <i class="fas fa-folder"></i>
+                <span>我的作品</span>
+            </div>
+            <div class="window-controls">
+                <button class="control-button minimize" onclick="minimizeWindow('projects-window')">
+                    <i class="fas fa-window-minimize"></i>
+                </button>
+                <button class="control-button maximize" onclick="maximizeWindow('projects-window')">
+                    <i class="far fa-square"></i>
+                </button>
+                <button class="control-button close" onclick="closeWindow('projects-window')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="window-content">
+            <h1>📂 精選作品</h1>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-icon">💡</div>
+                    <div>
+                        <h3>IoT Dashboard</h3>
+                        <p class="project-tech">Vue.js · Chart.js · MySQL</p>
+                    </div>
+                </div>
+                <p>Real-time data visualization dashboard for electric power monitoring.</p>
+                <a href="https://eletricpower-aiot.netlify.app/" target="_blank" class="project-button">
+                    查看 Demo <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-icon">🛒</div>
+                    <div>
+                        <h3>E-commerce API</h3>
+                        <p class="project-tech">Node.js · Express · MongoDB</p>
+                    </div>
+                </div>
+                <p>Backend API with authentication and payment integration.</p>
+                <a href="#" class="project-button">
+                    查看專案 <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-icon">✅</div>
+                    <div>
+                        <h3>Task Manager</h3>
+                        <p class="project-tech">React · Redux · Tailwind CSS</p>
+                    </div>
+                </div>
+                <p>Simple todo app with drag & drop functionality.</p>
+                <a href="#" class="project-button">
+                    查看專案 <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Window -->
+    <div class="window" id="gallery-window">
+        <div class="window-header" data-window="gallery-window">
+            <div class="window-title">
+                <i class="fas fa-images"></i>
+                <span>相簿</span>
+            </div>
+            <div class="window-controls">
+                <button class="control-button minimize" onclick="minimizeWindow('gallery-window')">
+                    <i class="fas fa-window-minimize"></i>
+                </button>
+                <button class="control-button maximize" onclick="maximizeWindow('gallery-window')">
+                    <i class="far fa-square"></i>
+                </button>
+                <button class="control-button close" onclick="closeWindow('gallery-window')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="window-content">
+            <h1>📸 我的相簿</h1>
+            <div class="gallery-grid">
+                <div class="gallery-item" onclick="openPhoto('https://picsum.photos/800/600?random=1')">
+                    <img src="https://picsum.photos/400/400?random=1" alt="Photo 1">
+                </div>
+                <div class="gallery-item" onclick="openPhoto('https://picsum.photos/800/600?random=2')">
+                    <img src="https://picsum.photos/400/400?random=2" alt="Photo 2">
+                </div>
+                <div class="gallery-item" onclick="openPhoto('https://picsum.photos/800/600?random=3')">
+                    <img src="https://picsum.photos/400/400?random=3" alt="Photo 3">
+                </div>
+                <div class="gallery-item" onclick="openPhoto('https://picsum.photos/800/600?random=4')">
+                    <img src="https://picsum.photos/400/400?random=4" alt="Photo 4">
+                </div>
+                <div class="gallery-item" onclick="openPhoto('https://picsum.photos/800/600?random=5')">
+                    <img src="https://picsum.photos/400/400?random=5" alt="Photo 5">
+                </div>
+                <div class="gallery-item" onclick="openPhoto('https://picsum.photos/800/600?random=6')">
+                    <img src="https://picsum.photos/400/400?random=6" alt="Photo 6">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Window -->
+    <div class="window" id="contact-window">
+        <div class="window-header" data-window="contact-window">
+            <div class="window-title">
+                <i class="fas fa-envelope"></i>
+                <span>聯絡方式</span>
+            </div>
+            <div class="window-controls">
+                <button class="control-button minimize" onclick="minimizeWindow('contact-window')">
+                    <i class="fas fa-window-minimize"></i>
+                </button>
+                <button class="control-button maximize" onclick="maximizeWindow('contact-window')">
+                    <i class="far fa-square"></i>
+                </button>
+                <button class="control-button close" onclick="closeWindow('contact-window')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="window-content">
+            <h1>📧 聯絡方式</h1>
+
+            <div class="contact-card">
+                <div class="contact-header">
+                    <i class="fab fa-github"></i>
+                    <span>GitHub</span>
+                </div>
+                <a href="https://github.com/Fa3Go" target="_blank" class="contact-link">
+                    Fa3Go <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-header">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email</span>
+                </div>
+                <a href="mailto:your.email@example.com" class="contact-link">
+                    your.email@example.com <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Window -->
+    <div class="window" id="notes-window">
+        <div class="window-header" data-window="notes-window">
+            <div class="window-title">
+                <i class="fas fa-sticky-note"></i>
+                <span>記事本</span>
+            </div>
+            <div class="window-controls">
+                <button class="control-button minimize" onclick="minimizeWindow('notes-window')">
+                    <i class="fas fa-window-minimize"></i>
+                </button>
+                <button class="control-button maximize" onclick="maximizeWindow('notes-window')">
+                    <i class="far fa-square"></i>
+                </button>
+                <button class="control-button close" onclick="closeWindow('notes-window')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="window-content" style="padding: 0;">
+            <textarea class="notes-area" placeholder="在這裡輸入文字..."></textarea>
+        </div>
+    </div>
+
+    <!-- Game Window -->
+    <div class="window" id="game-window">
+        <div class="window-header" data-window="game-window">
+            <div class="window-title">
+                <i class="fas fa-rocket"></i>
+                <span>太空射擊</span>
+            </div>
+            <div class="window-controls">
+                <button class="control-button minimize" onclick="minimizeWindow('game-window')">
+                    <i class="fas fa-window-minimize"></i>
+                </button>
+                <button class="control-button maximize" onclick="maximizeWindow('game-window')">
+                    <i class="far fa-square"></i>
+                </button>
+                <button class="control-button close" onclick="closeWindow('game-window')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="window-content" style="padding: 0;">
+            <iframe src="space-shooter.html" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+    </div>
+
+    <!-- Settings Window -->
+    <div class="window" id="settings-window">
+        <div class="window-header" data-window="settings-window">
+            <div class="window-title">
+                <i class="fas fa-cog"></i>
+                <span>設定</span>
+            </div>
+            <div class="window-controls">
+                <button class="control-button minimize" onclick="minimizeWindow('settings-window')">
+                    <i class="fas fa-window-minimize"></i>
+                </button>
+                <button class="control-button maximize" onclick="maximizeWindow('settings-window')">
+                    <i class="far fa-square"></i>
+                </button>
+                <button class="control-button close" onclick="closeWindow('settings-window')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="window-content">
+            <h1>⚙️ 設定</h1>
+
+            <div class="settings-card">
+                <div class="settings-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <div class="settings-info">
+                    <h3>切換到手機版</h3>
+                    <p>以 iOS 風格檢視此網站</p>
+                </div>
+                <button class="settings-button" onclick="switchToMobile()">
+                    切換
+                </button>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="settings-info">
+                    <h3>關於</h3>
+                    <p>版本 1.0.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Viewer -->
+    <div class="photo-viewer" id="photoViewer">
+        <div class="photo-viewer-header">
+            <button class="photo-close" onclick="closePhoto()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <img id="photoViewerImg" src="" alt="Photo">
+    </div>
+
+    <script src="desktop.js"></script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Portfolio - iOS</title>
+    <script>
+        // Function to switch to desktop version
+        function switchToDesktop() {
+            localStorage.setItem('forceDesktop', 'true');
+            localStorage.removeItem('forceMobile');
+            window.location.href = 'desktop.html';
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <span id="time">9:41</span>
+        </div>
+        <div class="status-notch"></div>
+        <div class="status-right">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+        </div>
+    </div>
+
+    <!-- Home Screen -->
+    <div class="home-screen" id="homeScreen">
+        <div class="wallpaper"></div>
+
+        <!-- App Grid -->
+        <div class="app-grid">
+            <!-- About Me App -->
+            <div class="app-icon" data-app="about">
+                <div class="app-icon-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span class="app-name">關於我</span>
+            </div>
+
+            <!-- Projects App -->
+            <div class="app-icon" data-app="projects">
+                <div class="app-icon-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <i class="fas fa-folder"></i>
+                </div>
+                <span class="app-name">我的作品</span>
+            </div>
+
+            <!-- Gallery App -->
+            <div class="app-icon" data-app="gallery">
+                <div class="app-icon-img" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <i class="fas fa-images"></i>
+                </div>
+                <span class="app-name">相簿</span>
+            </div>
+
+            <!-- Contact App -->
+            <div class="app-icon" data-app="contact">
+                <div class="app-icon-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <span class="app-name">聯絡方式</span>
+            </div>
+
+            <!-- Notes App -->
+            <div class="app-icon" data-app="notes">
+                <div class="app-icon-img" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <span class="app-name">備忘錄</span>
+            </div>
+
+            <!-- Game App -->
+            <div class="app-icon" data-app="game">
+                <div class="app-icon-img" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <span class="app-name">太空射擊</span>
+            </div>
+
+            <!-- GitHub App -->
+            <div class="app-icon" onclick="window.open('https://github.com/Fa3Go', '_blank')">
+                <div class="app-icon-img" style="background: linear-gradient(135deg, #434343 0%, #000000 100%);">
+                    <i class="fab fa-github"></i>
+                </div>
+                <span class="app-name">GitHub</span>
+            </div>
+
+            <!-- Settings App -->
+            <div class="app-icon" data-app="settings">
+                <div class="app-icon-img" style="background: linear-gradient(135deg, #868f96 0%, #596164 100%);">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <span class="app-name">設定</span>
+            </div>
+        </div>
+
+        <!-- Page Indicator -->
+        <div class="page-indicator">
+            <span class="dot active"></span>
+        </div>
+
+        <!-- Dock -->
+        <div class="dock">
+            <div class="dock-icon" onclick="window.open('https://www.instagram.com/', '_blank')">
+                <div class="dock-icon-img" style="background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);">
+                    <i class="fab fa-instagram"></i>
+                </div>
+            </div>
+            <div class="dock-icon" onclick="window.open('https://twitter.com/', '_blank')">
+                <div class="dock-icon-img" style="background: linear-gradient(135deg, #1DA1F2 0%, #0d8bd9 100%);">
+                    <i class="fab fa-twitter"></i>
+                </div>
+            </div>
+            <div class="dock-icon" onclick="window.open('https://www.linkedin.com/', '_blank')">
+                <div class="dock-icon-img" style="background: linear-gradient(135deg, #0077B5 0%, #005582 100%);">
+                    <i class="fab fa-linkedin"></i>
+                </div>
+            </div>
+            <div class="dock-icon" data-app="about">
+                <div class="dock-icon-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Indicator -->
+        <div class="home-indicator"></div>
+    </div>
+
+    <!-- App Views -->
+    <!-- About App -->
+    <div class="app-view" id="about-app">
+        <div class="app-header">
+            <button class="back-button" onclick="closeApp()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h1>關於我</h1>
+            <div></div>
+        </div>
+        <div class="app-content">
+            <div class="profile-section">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2>Hi, I'm a Developer</h2>
+                <p class="subtitle">專注於全端開發、IoT與各種技術實作</p>
+            </div>
+
+            <div class="info-card">
+                <h3>💻 技術專長</h3>
+                <div class="skills-grid">
+                    <span class="skill-badge">HTML/CSS</span>
+                    <span class="skill-badge">JavaScript</span>
+                    <span class="skill-badge">Python</span>
+                    <span class="skill-badge">Vue.js</span>
+                    <span class="skill-badge">React Native</span>
+                    <span class="skill-badge">Flutter</span>
+                    <span class="skill-badge">PHP</span>
+                    <span class="skill-badge">C</span>
+                    <span class="skill-badge">SQL</span>
+                    <span class="skill-badge">MySQL</span>
+                    <span class="skill-badge">MongoDB</span>
+                    <span class="skill-badge">SQLite</span>
+                    <span class="skill-badge">Git</span>
+                    <span class="skill-badge">Docker</span>
+                    <span class="skill-badge">Flask</span>
+                    <span class="skill-badge">Figma</span>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>📚 關於</h3>
+                <p>從2020年開始學習程式設計，持續探索新技術，追求代碼品質與使用者體驗。</p>
+            </div>
+        </div>
+        <div class="home-indicator"></div>
+    </div>
+
+    <!-- Projects App -->
+    <div class="app-view" id="projects-app">
+        <div class="app-header">
+            <button class="back-button" onclick="closeApp()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h1>我的作品</h1>
+            <div></div>
+        </div>
+        <div class="app-content">
+            <div class="project-card">
+                <div class="project-icon">💡</div>
+                <div class="project-info">
+                    <h3>IoT Dashboard</h3>
+                    <p>Real-time data visualization dashboard for electric power monitoring.</p>
+                    <div class="project-tech">Vue.js · Chart.js · MySQL</div>
+                    <a href="https://eletricpower-aiot.netlify.app/" target="_blank" class="project-link">
+                        查看 Demo <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-icon">🛒</div>
+                <div class="project-info">
+                    <h3>E-commerce API</h3>
+                    <p>Backend API with authentication and payment integration.</p>
+                    <div class="project-tech">Node.js · Express · MongoDB</div>
+                    <a href="#" class="project-link">
+                        查看專案 <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-icon">✅</div>
+                <div class="project-info">
+                    <h3>Task Manager</h3>
+                    <p>Simple todo app with drag & drop functionality.</p>
+                    <div class="project-tech">React · Redux · Tailwind CSS</div>
+                    <a href="#" class="project-link">
+                        查看專案 <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="home-indicator"></div>
+    </div>
+
+    <!-- Gallery App -->
+    <div class="app-view" id="gallery-app">
+        <div class="app-header">
+            <button class="back-button" onclick="closeApp()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h1>相簿</h1>
+            <div></div>
+        </div>
+        <div class="app-content">
+            <div class="photo-grid">
+                <div class="photo-item" onclick="openPhoto('https://picsum.photos/800/600?random=1')">
+                    <img src="https://picsum.photos/400/400?random=1" alt="Photo 1">
+                </div>
+                <div class="photo-item" onclick="openPhoto('https://picsum.photos/800/600?random=2')">
+                    <img src="https://picsum.photos/400/400?random=2" alt="Photo 2">
+                </div>
+                <div class="photo-item" onclick="openPhoto('https://picsum.photos/800/600?random=3')">
+                    <img src="https://picsum.photos/400/400?random=3" alt="Photo 3">
+                </div>
+                <div class="photo-item" onclick="openPhoto('https://picsum.photos/800/600?random=4')">
+                    <img src="https://picsum.photos/400/400?random=4" alt="Photo 4">
+                </div>
+                <div class="photo-item" onclick="openPhoto('https://picsum.photos/800/600?random=5')">
+                    <img src="https://picsum.photos/400/400?random=5" alt="Photo 5">
+                </div>
+                <div class="photo-item" onclick="openPhoto('https://picsum.photos/800/600?random=6')">
+                    <img src="https://picsum.photos/400/400?random=6" alt="Photo 6">
+                </div>
+            </div>
+        </div>
+        <div class="home-indicator"></div>
+    </div>
+
+    <!-- Contact App -->
+    <div class="app-view" id="contact-app">
+        <div class="app-header">
+            <button class="back-button" onclick="closeApp()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h1>聯絡方式</h1>
+            <div></div>
+        </div>
+        <div class="app-content">
+            <div class="contact-section">
+                <h3>📱 社群媒體</h3>
+                <a href="https://github.com/Fa3Go" target="_blank" class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-name">GitHub</div>
+                        <div class="contact-detail">Fa3Go</div>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+
+            <div class="contact-section">
+                <h3>✉️ Email</h3>
+                <a href="mailto:your.email@example.com" class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-name">電子郵件</div>
+                        <div class="contact-detail">your.email@example.com</div>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="home-indicator"></div>
+    </div>
+
+    <!-- Notes App -->
+    <div class="app-view" id="notes-app">
+        <div class="app-header">
+            <button class="back-button" onclick="closeApp()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h1>備忘錄</h1>
+            <div></div>
+        </div>
+        <div class="app-content">
+            <textarea class="notes-textarea" placeholder="在這裡輸入文字..."></textarea>
+        </div>
+        <div class="home-indicator"></div>
+    </div>
+
+    <!-- Game App -->
+    <div class="app-view" id="game-app">
+        <div class="app-header">
+            <button class="back-button" onclick="closeApp()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h1>太空射擊</h1>
+            <div></div>
+        </div>
+        <div class="app-content" style="padding: 0;">
+            <iframe src="space-shooter.html" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+        <div class="home-indicator"></div>
+    </div>
+
+    <!-- Settings App -->
+    <div class="app-view" id="settings-app">
+        <div class="app-header">
+            <button class="back-button" onclick="closeApp()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h1>設定</h1>
+            <div></div>
+        </div>
+        <div class="app-content">
+            <div class="settings-section">
+                <div class="settings-item" onclick="switchToDesktop()">
+                    <div class="settings-icon" style="background: #007AFF;">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <div class="settings-info">
+                        <div class="settings-name">切換到桌面版</div>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>關於</h3>
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-name">版本</div>
+                        <div class="settings-detail">1.0.0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="home-indicator"></div>
+    </div>
+
+    <!-- Photo Viewer -->
+    <div class="photo-viewer" id="photoViewer">
+        <button class="photo-close" onclick="closePhoto()">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="photoViewerImg" src="" alt="Photo">
+        <div class="home-indicator"></div>
+    </div>
+
+    <!-- Control Center -->
+    <div class="control-center" id="controlCenter">
+        <div class="control-content">
+            <div class="control-grid">
+                <div class="control-item control-large">
+                    <i class="fas fa-wifi"></i>
+                    <span>Wi-Fi</span>
+                </div>
+                <div class="control-item control-large">
+                    <i class="fas fa-bluetooth-b"></i>
+                    <span>藍牙</span>
+                </div>
+                <div class="control-item">
+                    <i class="fas fa-plane"></i>
+                    <span>飛航模式</span>
+                </div>
+                <div class="control-item">
+                    <i class="fas fa-moon"></i>
+                    <span>勿擾模式</span>
+                </div>
+            </div>
+
+            <div class="brightness-control">
+                <i class="fas fa-sun"></i>
+                <input type="range" min="0" max="100" value="80" class="brightness-slider">
+            </div>
+
+            <div class="volume-control">
+                <i class="fas fa-volume-up"></i>
+                <input type="range" min="0" max="100" value="60" class="volume-slider">
+            </div>
+        </div>
+    </div>
+
+    <script src="mobile.js"></script>
+</body>
+</html>
