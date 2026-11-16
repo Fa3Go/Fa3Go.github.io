@@ -93,8 +93,17 @@ function openWindow(windowId) {
             const offset = (activeWindows.size - 1) * 30;
             window.style.top = (100 + offset) + 'px';
             window.style.left = (200 + offset) + 'px';
-            window.style.width = '700px';
-            window.style.height = '500px';
+
+            // The space shooter's canvas is 800x600 (4:3) - give it a
+            // bigger window than the generic default so it isn't
+            // squeezed down and hard to control.
+            if (windowId === 'game') {
+                window.style.width = '880px';
+                window.style.height = '660px';
+            } else {
+                window.style.width = '700px';
+                window.style.height = '500px';
+            }
         }
     } else {
         // Window was previously opened, restore it
